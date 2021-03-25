@@ -69,11 +69,12 @@ class ReLULayer:
 
     def forward(self, X):
         # TODO copy from the previous assignment
-        raise Exception("Not implemented!")
+        self.diff = (X > 0).astype(float)
+        return np.maximum(X, np.zeros_like(X))
 
     def backward(self, d_out):
         # TODO copy from the previous assignment
-        raise Exception("Not implemented!")
+        d_result = self.diff * d_out
         return d_result
 
     def params(self):
@@ -88,12 +89,15 @@ class FullyConnectedLayer:
 
     def forward(self, X):
         # TODO copy from the previous assignment
-        raise Exception("Not implemented!")
+        self.X = X.copy()
+        return np.dot(X, self.W.value) + self.B.value
 
     def backward(self, d_out):
         # TODO copy from the previous assignment
         
-        raise Exception("Not implemented!")        
+        self.W.grad += np.dot(self.X.T, d_out)
+        self.B.grad += np.sum(d_out, axis=0, keepdims=True)
+        d_input = np.dot(d_out, self.W.value.T)       
         return d_input
 
     def params(self):
